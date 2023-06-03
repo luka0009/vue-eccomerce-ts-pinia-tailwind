@@ -16,9 +16,31 @@
         <p v-text="product.description"></p>
         <p class="mt-4 text-lg">{{ toCurrency(product.price) }}</p>
         <div class="card-actions">
-          <button class="btn btn-primary" @click="cartStore.add(product.id)">
+          <button 
+          v-if="quantity === 0"
+          class="btn btn-primary" @click="cartStore.add(product.id)">
             Add to Cart
           </button>
+          <div v-else class="flex gap-x-1">
+          <button
+            @click="cartStore.remove(product.id)"
+            class="scale-125 px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md"
+          >
+            -
+          </button>
+          <span
+            class="scale-125 px-3 py-1 text-sm font-medium text-black rounded-md"
+          >
+            <!-- {{ computed(() => cartStore.contents[product.id]?.quantity || 0) }} -->
+            {{ quantity }}
+          </span>
+          <button
+            @click="cartStore.add(product.id)"
+            class="scale-125 px-3 py-1 text-sm font-medium text-white bg-blue-600 rounded-md"
+          >
+            +
+          </button>
+        </div>
         </div>
       </div>
     </div>
@@ -31,15 +53,15 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from 'vue';
-import { useRoute } from 'vue-router';
+import { computed } from "vue";
+import { useRoute } from "vue-router";
 
-import { useCartStore } from '../stores/cart';
-import { useProductStore } from '../stores/products';
-import type { Product } from '../stores/products';
-import { toCurrency } from '../utils/formatCurrency';
+import { useCartStore } from "../stores/cart";
+import { useProductStore } from "../stores/products";
+import type { Product } from "../stores/products";
+import { toCurrency } from "../utils/formatCurrency";
 
-import CartCardSkeleton from '../components/CartCardSkeleton.vue';
+import CartCardSkeleton from "../components/CartCardSkeleton.vue";
 
 const cartStore = useCartStore();
 const productStore = useProductStore();
@@ -48,5 +70,9 @@ const route = useRoute();
 
 const product = computed<Product>(
   () => productStore.items[route.params.productId as string]
+);
+
+const quantity = computed(
+  () => cartStore.contents[route.params.productId as string]?.quantity || 0
 );
 </script>
