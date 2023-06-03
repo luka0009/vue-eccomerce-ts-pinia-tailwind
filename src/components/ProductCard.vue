@@ -17,23 +17,26 @@
       </h2>
       <p>{{ toCurrency(product.price) }}</p>
       <div class="justify-end card-actions">
-        <!-- <button
-      v-if="computed(() => cartStore.contents[product.id]?.quantity === 0)"
-      class="btn btn-primary absolute bottom-3 right-3"
-      @click="cartStore.add(product.id)"
-    >
-      Add to Cart
-    </button> -->
+        <button
+          v-if="quantity === 0"
+          class="btn btn-primary absolute bottom-3 right-3"
+          @click="cartStore.add(product.id)"
+        >
+          Add to Cart
+        </button>
 
-        <div class="flex absolute bottom-3 right-3 gap-x-1">
+        <div v-else class="flex absolute bottom-3 right-3 gap-x-1">
           <button
             @click="cartStore.remove(product.id)"
             class="scale-125 px-3 py-1 text-sm font-medium text-white bg-red-600 rounded-md"
           >
             -
           </button>
-          <span class="scale-125 px-3 py-1 text-sm font-medium text-black rounded-md">
-            {{ computed(() => cartStore.contents[product.id]?.quantity || 0) }}
+          <span
+            class="scale-125 px-3 py-1 text-sm font-medium text-black rounded-md"
+          >
+            <!-- {{ computed(() => cartStore.contents[product.id]?.quantity || 0) }} -->
+            {{ quantity }}
           </span>
           <button
             @click="cartStore.add(product.id)"
@@ -55,7 +58,12 @@ import { toCurrency } from "../utils/formatCurrency";
 
 const cartStore = useCartStore();
 
-defineProps<{
+const props = defineProps<{
   product: Product;
 }>();
+
+console.log(props.product);
+const quantity = computed(
+  () => cartStore.contents[props.product.id]?.quantity || 0
+);
 </script>
